@@ -1,44 +1,33 @@
-function createCookie(name,value,days,path) {
-        if (days) {
-            var date = new Date();
-            date.setTime(date.getTime()+(days*24*60*60*1000));
-            var expires = "; expires="+date.toGMTString();
-        }
-        else var expires = "";
-        document.cookie = name+"="+value+expires+"; path="+path;
-    }
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+    var expires = "expires="+d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
 
-    function readCookie(name) {
-        var nameEQ = name + "=";
-        var ca = document.cookie.split(';');
-        for(var i=0;i < ca.length;i++) {
-            var c = ca[i];
-            while (c.charAt(0)==' ') c = c.substring(1,c.length);
-            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for(var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
         }
-        return null;
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
     }
+    return "";
+}
 
-    var cookieMessage = document.getElementById('cookie-message');
-    if (cookieMessage == null) {
-        return;
-    }
-    var cookie = readCookie('seen-cookie-message');
-    if (cookie != null && cookie == 'yes') {
-        cookieMessage.style.display = 'none';
+function checkCookie() {
+    var user = getCookie("username");
+    if (user != "") {
+        alert("Welcome again " + user);
     } else {
-        cookieMessage.style.display = 'block';
+        user = prompt("Please enter your name:", "");
+        if (user != "" && user != null) {
+            setCookie("username", user, 365);
+        }
     }
-    
-    // Set/update cookie
-    var cookieExpiry = cookieMessage.getAttribute('data-cookie-expiry');
-    if (cookieExpiry == null) {
-        cookieExpiry = 30;
-    }
-    var cookiePath = cookieMessage.getAttribute('data-cookie-path');
-    if (cookiePath == null) {
-        cookiePath = "/";
-    }
-    createCookie('seen-cookie-message','yes',cookieExpiry,cookiePath);
-
-})();
+}
