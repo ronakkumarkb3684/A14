@@ -1,33 +1,44 @@
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
-}
-
-function getCookie(cname) {
-    var name = cname + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-        var c = ca[i];
-        while (c.charAt(0) == ' ') {
-            c = c.substring(1);
+function createCookie(name,value,days,path) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
         }
-        if (c.indexOf(name) == 0) {
-            return c.substring(name.length, c.length);
-        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path="+path;
     }
-    return "";
-}
 
-function checkCookie() {
-    var user = getCookie("username");
-    if (user != "") {
-        alert("Welcome again " + user);
+    function readCookie(name) {
+        var nameEQ = name + "=";
+        var ca = document.cookie.split(';');
+        for(var i=0;i < ca.length;i++) {
+            var c = ca[i];
+            while (c.charAt(0)==' ') c = c.substring(1,c.length);
+            if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+        }
+        return null;
+    }
+
+    var cookieMessage = document.getElementById('cookie-message');
+    if (cookieMessage == null) {
+        return;
+    }
+    var cookie = readCookie('seen-cookie-message');
+    if (cookie != null && cookie == 'yes') {
+        cookieMessage.style.display = 'none';
     } else {
-        user = prompt("Please enter your name:", "");
-        if (user != "" && user != null) {
-            setCookie("username", user, 365);
-        }
+        cookieMessage.style.display = 'block';
     }
-}
+    
+    // Set/update cookie
+    var cookieExpiry = cookieMessage.getAttribute('data-cookie-expiry');
+    if (cookieExpiry == null) {
+        cookieExpiry = 30;
+    }
+    var cookiePath = cookieMessage.getAttribute('data-cookie-path');
+    if (cookiePath == null) {
+        cookiePath = "/";
+    }
+    createCookie('seen-cookie-message','yes',cookieExpiry,cookiePath);
+
+})();
